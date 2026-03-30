@@ -1,4 +1,5 @@
 using System.Text.Json;
+using System.Linq;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -56,29 +57,43 @@ app.MapGet("/entries/{id}", (string id) =>
 // POST /entries — add a new entry
 app.MapPost("/entries", async (HttpRequest request) =>
 {
-    var body = await JsonSerializer.DeserializeAsync<Dictionary<string, string>>(request.Body);
-    if (body is null) return Results.BadRequest(new { error = "Invalid request body" });
-
-    string[] required = ["tool", "task", "expected", "actual", "verdict"];
-    if (!required.All(f => body.ContainsKey(f) && !string.IsNullOrWhiteSpace(body[f])))
+    try
     {
-        return Results.BadRequest(new { error = "All fields are required: tool, task, expected, actual, verdict" });
+        var body = await JsonSerializer.DeserializeAsync<Dictionary<string, string>>(request.Body);
+
+        if (body is null) return Results.BadRequest(new { error = "Invalid request body" });
+
+        string[] required = ["tool", "task", "expected", "actual", "verdict"];
+        if (!required.All(f => body.ContainsKey(f) && !string.IsNullOrWhiteSpace(body[f])))
+        {
+            return Results.BadRequest(new { error = "All fields are required: tool, task, expected, actual, verdict" });
+        }
+
+        var validVerdicts = new HashSet<string> { "Faster", "Same", "Slower", "Surprising" };
+        if (!validVerdicts.Contains(body["verdict"]))
+        {
+            return Results.BadRequest(new { error = "verdict must be one of: Faster, Same, Slower, Surprising" });
+        }
+
+        var experiments = ReadExperiments();
+        var newEntry = new Dictionary<string, object>
+        {
+            ["id"] = $"exp-{Guid.NewGuid().ToString("N")[..8]}",
+            ["tool"] = body["tool"],
+            ["task"] = body["task"],
+            ["expected"] = body["expected"],
+            ["actual"] = body["actual"],
+            ["verdict"] = body["verdict"],
+            ["timestamp"] = DateTime.UtcNow.ToString("o")
+        };
+        experiments.Add(newEntry);
+        WriteExperiments(experiments);
+        return Results.Created($"/entries/{newEntry["id"]}", newEntry);
     }
-
-    var experiments = ReadExperiments();
-    var newEntry = new Dictionary<string, object>
+    catch (JsonException ex)
     {
-        ["id"] = $"exp-{Guid.NewGuid().ToString("N")[..8]}",
-        ["tool"] = body["tool"],
-        ["task"] = body["task"],
-        ["expected"] = body["expected"],
-        ["actual"] = body["actual"],
-        ["verdict"] = body["verdict"],
-        ["timestamp"] = DateTime.UtcNow.ToString("o")
-    };
-    experiments.Add(newEntry);
-    WriteExperiments(experiments);
-    return Results.Created($"/entries/{newEntry["id"]}", newEntry);
+        return Results.BadRequest(new { error = "Invalid JSON format" });
+    }
 });
 
 // GET /summary — aggregated experiment data

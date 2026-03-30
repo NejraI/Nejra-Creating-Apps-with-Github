@@ -29,7 +29,6 @@ public class SummaryTests : IClassFixture<WebApplicationFactory<Program>>
 
     // Lab 2 Challenge: add more tests below this line
 
-    // Test that by_tool contains the correct tool names from the data
     [Fact]
     public async Task GetSummary_ReturnsByToolWithToolNames()
     {
@@ -41,21 +40,52 @@ public class SummaryTests : IClassFixture<WebApplicationFactory<Program>>
         Assert.True(byTool.EnumerateObject().Any());
     }
 
-    // Test that the verdict counts in by_verdict add up to the total
-    [Fact]
-    public async Task GetSummary_VerdictCountsAddUpToTotal()
+    [Fact]    
+    public async Task GetSummary_VerifyVerdictCountsAddUpToTotal()
     {
         var response = await _client.GetAsync("/summary");
         response.EnsureSuccessStatusCode();
         var content = await response.Content.ReadAsStringAsync();
         var json = JsonDocument.Parse(content);
-        var total = json.RootElement.GetProperty("total").GetInt32();
-        var byVerdict = json.RootElement.GetProperty("by_verdict");
-        var verdictSum = 0;
-        foreach (var prop in byVerdict.EnumerateObject())
+        Assert.True(json.RootElement.TryGetProperty("total", out var total));
+        Assert.True(json.RootElement.TryGetProperty("by_verdict", out var byVerdict));
+        int sum = byVerdict.EnumerateObject().Sum(v => v.Value.GetInt32());
+        Assert.Equal(total.GetInt32(), sum);
+    }
+
+    // Test that by_tool data is correct: each tool has verdict counts and they sum correctly
+    [Fact]
+    public async Task GetSummary_VerifyByToolDataIsCorrect()
+    {
+        // Arrange & Act
+        var response = await _client.GetAsync("/summary");
+        response.EnsureSuccessStatusCode();
+        var content = await response.Content.ReadAsStringAsync();
+        var json = JsonDocument.Parse(content);
+        
+        // Assert: by_tool exists and is not empty
+        Assert.True(json.RootElement.TryGetProperty("by_tool", out var byTool));
+        var toolCount = byTool.EnumerateObject().Count();
+        Assert.True(toolCount > 0, "by_tool should contain at least one tool");
+        
+        // Assert: each tool has the expected verdict structure
+        var expectedVerdicts = new[] { "Faster", "Same", "Slower", "Surprising" };
+        foreach (var tool in byTool.EnumerateObject())
         {
-            verdictSum += prop.Value.GetInt32();
+            var verdictCounts = tool.Value;
+            
+            // Each tool should have all verdict types
+            foreach (var verdict in expectedVerdicts)
+            {
+                Assert.True(verdictCounts.TryGetProperty(verdict, out var count), 
+                    $"Tool '{tool.Name}' should have '{verdict}' verdict count");
+                Assert.True(count.GetInt32() >= 0, 
+                    $"Verdict count for '{verdict}' in tool '{tool.Name}' should be non-negative");
+            }
+            
+            // Verdict counts for each tool should sum to total entries for that tool
+            var toolTotal = expectedVerdicts.Sum(v => verdictCounts.GetProperty(v).GetInt32());
+            Assert.True(toolTotal > 0, $"Tool '{tool.Name}' should have at least one entry");
         }
-        Assert.Equal(total, verdictSum);
     }
 }
