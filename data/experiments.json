@@ -1,0 +1,20 @@
+[
+  {
+    "id": "exp-001",
+    "tool": "Copilot Inline",
+    "task": "Generate a function to parse CSV data into JSON objects",
+    "expected": "A working parser that handles headers and rows correctly",
+    "actual": "Produced a clean parser on first suggestion, handled edge cases like quoted commas",
+    "verdict": "Faster",
+    "timestamp": "2026-03-16T09:45:00Z"
+  },
+  {
+    "id": "exp-002",
+    "tool": "Copilot Chat",
+    "task": "Explain the difference between middleware and route handlers in Express",
+    "expected": "A clear conceptual explanation with examples",
+    "actual": "Gave a good explanation but the example used deprecated Express 3 syntax",
+    "verdict": "Surprising",
+    "timestamp": "2026-03-16T10:15:00Z"
+  }
+]

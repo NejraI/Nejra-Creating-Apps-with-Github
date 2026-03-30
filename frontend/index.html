@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Experiment Log</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+</head>
+<body>
+  <header>
+    <h1>AI Experiment Log</h1>
+    <nav>
+      <button class="nav-btn active" data-view="log">Log</button>
+      <button class="nav-btn" data-view="dashboard">Dashboard</button>
+      <button class="nav-btn" data-view="add">Add Entry</button>
+    </nav>
+  </header>
+
+  <main>
+    <!-- Log View -->
+    <section id="log-view" class="view active">
+      <h2>Experiment Log</h2>
+      <div id="entries-list"></div>
+    </section>
+
+    <!-- Dashboard View -->
+    <section id="dashboard-view" class="view">
+      <h2>Dashboard</h2>
+      <div id="dashboard-message"></div>
+      <div id="charts-container">
+        <div class="chart-wrapper">
+          <h3>Verdict Breakdown</h3>
+          <canvas id="verdict-chart"></canvas>
+        </div>
+        <div class="chart-wrapper">
+          <h3>Tool Comparison</h3>
+          <canvas id="tool-chart"></canvas>
+          <div id="tool-chart-placeholder" class="not-implemented" style="display: none; align-items: center; justify-content: center; min-height: 200px;">
+            <p>Add <code>by_tool</code> to the <code>/summary</code> endpoint to unlock this chart.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Add Entry View -->
+    <section id="add-view" class="view">
+      <h2>Add Experiment</h2>
+      <form id="add-form">
+        <label for="tool">Tool</label>
+        <select id="tool" name="tool" required>
+          <option value="">Select a tool...</option>
+          <option value="Codespaces">Codespaces</option>
+          <option value="Copilot config files">Copilot config files</option>
+          <option value="SummaryEndpoint">Summary Endpoint</option>
+          <option value="CI/Deploy">CI/Deploy</option>
+        </select>
+
+        <label for="task">Task</label>
+        <input type="text" id="task" name="task" placeholder="What did you try?" required>
+
+        <label for="expected">Expected</label>
+        <textarea id="expected" name="expected" placeholder="What did you expect to happen?" required></textarea>
+
+        <label for="actual">Actual</label>
+        <textarea id="actual" name="actual" placeholder="What actually happened?" required></textarea>
+
+        <label for="verdict">Verdict</label>
+        <select id="verdict" name="verdict" required>
+          <option value="">Select a verdict...</option>
+          <option value="Faster">Faster</option>
+          <option value="Same">Same</option>
+          <option value="Slower">Slower</option>
+          <option value="Surprising">Surprising</option>
+        </select>
+
+        <button type="submit">Add Entry</button>
+      </form>
+      <div id="form-message"></div>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>

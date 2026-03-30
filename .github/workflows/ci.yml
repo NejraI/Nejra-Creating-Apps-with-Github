@@ -1,0 +1,55 @@
+# CI Pipeline — runs tests for all three language implementations
+#
+# Lab 3: Add the workflow structure
+# The steps for each job are already written. Your task is to add the
+# structural YAML that makes this a working workflow:
+#
+#   - name          — give the workflow a display name
+#   - on            — add triggers so it runs on push to main and on pull_request
+#   - jobs          — wrap each group of steps in a proper job with:
+#       - runs-on   — which runner to use (ubuntu-latest)
+#       - defaults  — set working-directory so run steps execute in the right folder
+#       - steps     — the steps are already listed below, ready to use
+#
+# See the Lab 3 instructions for details.
+
+# Lab 3: Add a workflow name here
+
+# Lab 3: Add triggers — right now only manual trigger is set
+on:
+  workflow_dispatch:
+
+# Lab 3: Define jobs — each group of steps below needs to be wrapped
+# in a proper job with runs-on, defaults (working-directory), and steps.
+# The steps themselves are ready to go — you just need the structure around them.
+
+# ── Node.js steps (should run in the node/ directory) ──
+#      - uses: actions/checkout@v4
+#      - uses: actions/setup-node@v4
+#        with:
+#          node-version: "20"
+#      - run: npm ci
+#      - run: npm test
+
+# ── Python steps (should run in the python/ directory) ──
+#      - uses: actions/checkout@v4
+#      - uses: actions/setup-python@v5
+#        with:
+#          python-version: "3.12"
+#      - run: pip install -r requirements.txt
+#      - run: pytest --tb=short
+
+# ── .NET steps (should run in the dotnet/ directory) ──
+#      - uses: actions/checkout@v4
+#      - uses: actions/setup-dotnet@v4
+#        with:
+#          dotnet-version: "10.x"
+#      - run: dotnet restore Api.Tests
+#      - run: dotnet build --no-restore
+#      - run: dotnet build Api.Tests --no-restore
+#      - run: dotnet test Api.Tests --no-build
+
+# Lint steps (Lab 3 challenge — add these to your jobs):
+#   Node.js: npx eslint .
+#   Python:  pip install ruff && ruff check .
+#   .NET:    build warnings are checked during dotnet build

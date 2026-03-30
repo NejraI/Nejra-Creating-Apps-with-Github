@@ -1,0 +1,17 @@
+# Node
+node/node_modules/
+
+# Python
+python/__pycache__/
+python/.pytest_cache/
+*.pyc
+
+# .NET
+dotnet/bin/
+dotnet/obj/
+dotnet/Api.Tests/bin/
+dotnet/Api.Tests/obj/
+
+# OS
+.DS_Store
+Thumbs.db

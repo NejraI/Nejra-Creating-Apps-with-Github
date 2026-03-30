@@ -1,0 +1,54 @@
+name: Feature Request
+description: Propose a new feature for the AI Experiment Log
+title: "[Feature]: "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this template to describe the feature you want to implement.
+        A well-written issue is Copilot context — the clearer you write this, the better Copilot can help you build it.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: What should this feature do? Be specific.
+      placeholder: "The GET /summary endpoint should return aggregated experiment data..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance-criteria
+    attributes:
+      label: Acceptance Criteria
+      description: How do you know this feature is done? List testable conditions.
+      placeholder: |
+        - [ ] Endpoint returns 200 with JSON body
+        - [ ] Response includes `by_verdict`, `by_tool`, and `total` fields
+        - [ ] Dashboard chart renders when endpoint is available
+    validations:
+      required: true
+
+  - type: textarea
+    id: affected-files
+    attributes:
+      label: Affected Files
+      description: Which files will you create or modify?
+      placeholder: |
+        - node/server.js (add /summary route)
+        - frontend/app.js (already handles the response)
+    validations:
+      required: true
+
+  - type: textarea
+    id: definition-of-done
+    attributes:
+      label: Definition of Done
+      description: What must be true before this issue can be closed?
+      placeholder: |
+        - Code committed and pushed
+        - Endpoint returns correct data for the sample entries
+        - Dashboard displays charts instead of "summary not yet available"
+    validations:
+      required: true
