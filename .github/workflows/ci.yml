@@ -14,10 +14,15 @@
 # See the Lab 3 instructions for details.
 
 # Lab 3: Add a workflow name here
+name: CI
 
 # Lab 3: Add triggers — right now only manual trigger is set
 on:
   workflow_dispatch:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
 
 # Lab 3: Define jobs — each group of steps below needs to be wrapped
 # in a proper job with runs-on, defaults (working-directory), and steps.
@@ -48,6 +53,23 @@ on:
 #      - run: dotnet build --no-restore
 #      - run: dotnet build Api.Tests --no-restore
 #      - run: dotnet test Api.Tests --no-build
+
+jobs:
+  dotnet:
+    name: .NET
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: dotnet
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+      - run: dotnet restore
+      - run: dotnet build --no-restore
+      - run: dotnet build Api.Tests --no-restore
+      - run: dotnet test Api.Tests --no-build
 
 # Lint steps (Lab 3 challenge — add these to your jobs):
 #   Node.js: npx eslint .
