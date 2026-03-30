@@ -1,4 +1,4 @@
-Lab Student
+Nejra Imsirovic
 
 # Creating Apps with GitHub — AI Experiment Log
 

@@ -5,11 +5,21 @@
     "vscode": {
       "extensions": [
         "GitHub.copilot",
-        "GitHub.copilot-chat"
+        "GitHub.copilot-chat",
+        "ms-dotnettools.csdevkit"
       ],
       "settings": {
         "editor.formatOnSave": true
       }
     }
-  }
+  },
+  "features": {
+    "ghcr.io/devcontainers/features/dotnet:2": {
+      "version": "10.0"
+    }
+  },
+  "postCreateCommand": "cd dotnet && dotnet restore && cd Api.Tests && dotnet restore",
+  "forwardPorts": [
+    5001
+  ]
 }
