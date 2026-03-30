@@ -67,6 +67,7 @@ jobs:
         with:
           dotnet-version: "8.0.x"
       - run: dotnet restore
+      - run: dotnet restore Api.Tests
       - run: dotnet build --no-restore
       - run: dotnet build Api.Tests --no-restore
       - run: dotnet test Api.Tests --no-build
